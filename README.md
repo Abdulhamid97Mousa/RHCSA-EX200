@@ -1,7 +1,6 @@
 # Redhat
 
 - [RHCSA](#RHCSA)
-- [RHCE](#RHCE)
 
 ## RHCSA
 

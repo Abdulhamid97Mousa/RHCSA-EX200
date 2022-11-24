@@ -19,6 +19,7 @@
 ### Understand and use essential tools
 
 1. Programmable completion for bash is provided in the bash-completion module. To install this module:
+
     ```shell
     sudo dnf install bash-completion
     ```

@@ -3059,14 +3059,16 @@
 1. Asghar Ghori - Exercise 13-6: Install Software and Activate VDO
 
 	* Install the VDO software packages, start the VDO services, and mark it for autostart on subsequent reboots:
+	
 	    ```shell
 		dnf install vdo kmod-kvdo -y
 		systemctl start vdo.service & systemctl enable vdo.service
-        ```
+            ```
 
 1. Asghar Ghori - Exercise 13-7: Create a VDO Volume
 
 	* Create a volume called *vdo-vol1* of logical size 16GB on the `/dev/sdc` disk (the actual size of `/dev/sdc` is 4GB). List the volume and display its status information. Show the activation status of the compression and de-duplication features:
+	
 	    ```shell
 		wipefs -a /dev/sdc # couldn't create without doing this first
 		vdo create --name vdo-vol1 --device /dev/sdc --vdoLogicalSize 16G --vdoSlabSize 128

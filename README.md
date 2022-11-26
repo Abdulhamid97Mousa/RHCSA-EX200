@@ -25,50 +25,51 @@ This repo wasn't built by me, i just found the repo that someone has made and de
 
 1. Programmable completion for bash is provided in the bash-completion module. To install this module:
 
-    ```shell
+    ```
     sudo dnf install bash-completion
     ```
 
 1. Access a shell prompt and issue commands with correct syntax
 
     * Common commands and their options, as well as vim usage, are shown below:
-        | Command        | Options                                                                                                                                                          | Description                                     |
-        |----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|
-        | ls             | -h (human readable) <br>  -a (show hidden) <br> -l (detailed) <br> -lt (newist file first) <br> -ltr (oldest file first)                                         | List of files and directories                  |
-        | pwd            |                                                                                                                                                                  | Print working directory                         |
-        | cd             | ~ (home) <br> / (root) <br> - (switch) <br> .. (parent)                                                                                                          | Change directories                              |
-        | who            | whoami (show user)                                                                                                                                               | Show logged in users                           |
-        | what           | w (shorthand)                                                                                                                                                    | Show logged in users with more detail           |
-        | uptime         |                                                                                                                                                                  | Show system uptime                              |
-        | logname        |                                                                                                                                                                  | Show real username (if using su)                |
-        | id             |                                                                                                                                                                  | Shows a user's UID, username, GUID etc.         |
-        | groups         |                                                                                                                                                                  | Lists groups for users                          |
-        | last           |                                                                                                                                                                  | List all user logins and system reboots         |
-        | lastb          |                                                                                                                                                                  | List all failed login attempts                  |
-        | lastlog        |                                                                                                                                                                  | List recent logins                              |
-        | uname          | -a (details)                                                                                                                                                     | System information                             |
-        | hostnamectl    | set-hostname                                                                                                                                                     | View hostname                                  |
-        | clear          |                                                                                                                                                                  | Clear the screen                                |
-        | timedatectl    | set-time <br> list-timezones <br> set-timezone <br>                                                                                                              | Display system time                             |
-        | date           | --set                                                                                                                                                            | View system date                                |
-        | which          |                                                                                                                                                                  | Show path to a command                          |
-        | wc             |                                                                                                                                                                  | Word count                                      |
-        | lspci          | -m (legible)                                                                                                                                                     | PCI buses details                              |
-        | lsusb          |                                                                                                                                                                  | USB buses details                               |
-        | lscpu          |                                                                                                                                                                  | Processor details                               |
-        | gzip/bzip2     | -d (uncompress)                                                                                                                                                  | Compress files                                  |
-        | gunzip/bunzip2 |                                                                                                                                                                  | Uncompress files                                |
-        | tar            | -c (create) <br> -f (specifies name) <br> -v (verbose) <br> -r (append to existing) <br> -x (extract) <br> -z (compress with gzip) <br> -j (compress with bzip2) | Archive file                                   |
-        | star           |                                                                                                                                                                  | Enhanced tar                                    |
-        | man            | -k (keyword) <br> -f (short description)                                                                                                                         | Manual                                         |
-        | mandb          |                                                                                                                                                                  | Update the mandb                                |
-        | ssh            | -l (as different user)                                                                                                                                           | SSH to another Linux system                    |
-        | tty            |                                                                                                                                                                  | Display terminal name                           |
-        | whatis         |                                                                                                                                                                  | Search the command in the mandb for description |
-        | info           |                                                                                                                                                                  | More detailed than man                          |
-        | apropos        |                                                                                                                                                                  | Search the command in the mandb                 |
-        | grep           | -n (show line numbers) <br> -v (pattern exclusion) <br> -i (case insensitive) <br> -E (use alternation) <br> -w (word match)                                     | Find text                                       |
+        | Command        | Options                                         | Description                                     |
+        |----------------|-------------------------------------------------|-------------------------------------------------|
+        | ls             | -h (human readable) <br>  -a (show hidden) <br> -l (detailed) <br> -lt (newist file first) <br> -ltr (oldest file first)                                            | List of files and directories                   |
+        | pwd            |                                                 | Print working directory                         |
+        | cd             | ~ (home) <br> / (root) <br> - (switch) <br> .. (parent)   | Change directories                    |
+        | who            | whoami (show user)                              | Show logged in users                            |
+        | what           | w (shorthand)                                   | Show logged in users with more detail           |
+        | uptime         |                                                 | Show system uptime                              |
+        | logname        |                                                 | Show real username (if using su)                |
+        | id             |                                                 | Shows a user's UID, username, GUID etc.         |
+        | groups         |                                                 | Lists groups for users                          |
+        | last           |                                                 | List all user logins and system reboots         |
+        | lastb          |                                                 | List all failed login attempts                  |
+        | lastlog        |                                                 | List recent logins                              |
+        | uname          | -a (details)                                    | System information                              |
+        | hostnamectl    | set-hostname                                    | View hostname                                   |
+        | clear          |                                                 | Clear the screen                                |
+        | timedatectl    | set-time <br> list-timezones <br> set-timezone <br>  | Display system time                        |
+        | date           | --set                                           | View system date                                |
+        | which          |                                                 | Show path to a command                          |
+        | wc             |                                                 | Word count                                      |
+        | lspci          | -m (legible)                                    | PCI buses details                               |
+        | lsusb          |                                                 | USB buses details                               |
+        | lscpu          |                                                 | Processor details                               |
+        | gzip/bzip2     | -d (uncompress)                                 | Compress files                                  |
+        | gunzip/bunzip2 |                                                 | Uncompress files                                |
+        | tar            | -c (create) <br> -f (specifies name) <br> -v (verbose) <br> -r (append to existing) <br> -x (extract) <br> -z (compress with gzip) <br> -j (compress with bzip2)    | Archive file                                    |
+        | star           |                                                 | Enhanced tar                                    |
+        | man            | -k (keyword) <br> -f (short description)        | Manual                                          |
+        | mandb          |                                                 | Update the mandb                                |
+        | ssh            | -l (as different user)                          | SSH to another Linux system                     |
+        | tty            |                                                 | Display terminal name                           |
+        | whatis         |                                                 | Search the command in the mandb for description |
+        | info           |                                                 | More detailed than man                          |
+        | apropos        |                                                 | Search the command in the mandb                 |
+        | grep           | -n (show line numbers) <br> -v (pattern exclusion) <br> -i (case insensitive) <br> -E (use alternation) <br> -w (word match) | Find text  |
         
+	
         | Key                      | Description                     |
         |--------------------------|---------------------------------|
         | i                        | Change to insert mode           |
@@ -92,30 +93,43 @@ This repo wasn't built by me, i just found the repo that someone has made and de
         | gg / G                   | Move to start / end of buffer   |
         | yy                       | Copy current line               |
         | p                        | Paste copied text after cursor  |
+	
     
 1. Use input-output redirection (>, >>, |, 2>, etc.)
     * The default locations for input, output, and error are referred to as standard input (stdin), standard output (stdout), and standard error (stderr).
     
     * Standard input redirection can be done to have a command read the required information from an alternative source, such as a file, instead of the keyboard. For example:
-        ```shell
+    
+        ```
+	
         cat < /etc/cron.allow 
+	
         ```
 
     * Standard output redirection sends the output generated by a command to an alternative destination, such as a file. For example:
-        ```shell
+    
+        ```
+	
         ll > ll.out
+	
         ```
 
     * Standard error redirection sends the output generated by a command to an alternative destination, such as a file. For example: 
-        ```shell
+    
+        ```
+	
         echo test 2> outerr.out
+	
         ```
 
     * Instead of > to create or overwrite, >> can be used to append to a file.
 
     * To redirect both stdout and stderror to a file:
-        ```shell
+    
+        ```
+	
         echo test >> result.txt 2>&1
+	
         ```
 
 1. Use grep and regular expressions to analyse text

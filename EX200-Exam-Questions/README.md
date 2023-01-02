@@ -14,14 +14,44 @@ One VM will be configured as an Server-A and another would be Server-B. there wi
 | node1.domain250.example.com | node1       | 172.25.250.100 | 255.255.255.0 |
 | node2.domain250.example.com | node2       | 172.25.250.101 | 255.255.255.0 |
 
-```mermaid
-flowchart TD;
-    A[Fire Up 6 VMs] --> B(#A Controller Node);
-    B -- Repo to pull packages from it --> Z[repository];
-    B -- Controlled By Node #A --> C[Managed Node1];
-    B -- Controlled By Node #A --> D[Managed Node2];
-```
-
 ## Lab Setup
 
 > you can create the lab setup manually, but instead i've `Vagrantfile` which you can use inorder to create this setup, please go to this website for more information regarding lab setup https://github.com/rdbreak/rhcsa8env
+
+## Question:1
+
+Configure your Host Name, IP Address, Gateway and DNS.
+Host name: `mars.domain250.example.com`
+IP Address: `172.25.250.100/24`
+Network Mask: `255.255.255.0`
+Gateway: `172.25.250.254`
+DNS: `172.25.250.254`
+
+## Answer:1
+
+> setting up hostname
+
+```shell
+[root@Server-A ~]# vim /etc/hostname
+```
+
+or
+
+```shell
+[root@Server-A ~]# hostnamectl set-hostname <hostname>
+```
+
+> setting ipv4/GW/DNS
+
+```shell
+[root@Server-A ~]# nmcli connection modify enp0s3 autoconnect yes ipv4.method manual ipv4.addresses 172.25.250.100 ipv4.gateway 172.25.250.254 ipv4.dns 172.25.250.254
+```
+
+or
+
+```shell
+[root@Server-A ~]# vim /etc/sysconfig/network-scripts/ifcfg-enp0s3
+IPADDR=172.25.250.100
+GATEWAY=172.25.250.254
+DNS1=172.25.250.254
+```

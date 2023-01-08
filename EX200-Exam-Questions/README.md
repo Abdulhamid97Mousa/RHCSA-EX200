@@ -56,3 +56,150 @@ IPADDR=172.25.250.100
 GATEWAY=172.25.250.254
 DNS1=172.25.250.254
 ```
+
+## Question:2 Configure your system to use the default repository
+
+YUM repositories are already available from `http://foundation0.ilt.example.com/dvd/BaseOS` and `http://foundation0.ilt.example.com/dvd/AppStream`
+
+- Configure your system to use these locations as default repository
+
+## Answer:2 Configure your system to use the default repository
+
+1. Install the yum-config-manager installation package
+   [root@clear ~]# rpm -ivh http://foundation0.ilt.example.com/dvd/BaseOS/Packages/yum-utils-4.0.12-3.el8.noarch.rpm
+
+2. repository file download and install
+
+# yum-config-manager
+
+# yum-config-manager -h
+
+```shell
+[root@clear ~]# yum-config-manager --add-repo http://foundation0.ilt.example.com/dvd/BaseOS
+Adding repo from: http://foundation0.ilt.example.com/dvd/BaseOS
+
+[root@clear ~]# yum-config-manager --add-repo http://foundation0.ilt.example.com/dvd/AppStream
+Adding repo from: http://foundation0.ilt.example.com/dvd/AppStream
+```
+
+3. Check if the installation is successful
+
+```shell
+[root@clear ~]# cd /etc/yum.repos.d/
+[root@clear yum.repos.d]# ls
+foundation0.ilt.example.com_dvd_AppStream.repo  foundation0.ilt.example.com_dvd_BaseOS.repo
+```
+
+4. you should also ensure some parameters are correct
+
+```shell
+[root@clear yum.repos.d]# vim foundation0.ilt.example.com_dvd_BaseOS.repo
+# enabled=1
+# gpgcheck=0
+```
+
+- 4.1. import key
+
+```shell
+[root@node1 ~]# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+```
+
+- 4.2 Search Validation Documents
+
+```shell
+[root@clear yum.repos.d]# find / -name *KEY*
+/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta
+/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+/usr/share/doc/gnupg2/KEYSERVER
+```
+
+Add validation file
+
+```shell
+[root@clear yum.repos.d]# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+```
+
+5. test
+
+```shell
+[root@clear yum.repos.d]# yum install -y ftp
+Complete!
+```
+
+## Question:3 Debug SELinux (service)
+
+A web server running on a non-standard port 82 is having trouble serving content. Debug and resolve the issue as necessary so that the following conditions are met:
+
+- The web server on the system is able to serve all existing HTML files in /var/www/html (note: do not delete or otherwise alter the contents of existing files)
+
+- The web server serves this content on port 82
+
+- The web server starts automatically at system startup
+
+## Answer:3 Debug SELinux (service)
+
+#semanage command is used to query and modify the security context of the SELinux default directory
+#apache belongs to `httpd` service
+
+1. View httpd service status
+
+```shell
+[root@node1 ~]# systemctl status httpd
+Active: failed (Result: exit-code)
+```
+
+2. View the security context of the HTML file
+
+# ls -Z prints the security context of the file
+
+```shell
+[root@node1 html]# ls -Z /var/www/html/*
+system_u:object_r:default_t:s0 /var/www/html/file1
+system_u:object_r:httpd_sys_content_t:s0 /var/www/html/file2
+system_u:object_r:httpd_sys_content_t:s0 /var/www/html/file3
+```
+
+3. Modify the security context of the original /var/www/html/file1 file
+   man semange fcontext
+   -a is replaced by -m (modify)
+
+```shell
+[root@node1 html]# semanage fcontext -m -t httpd_sys_content_t "/var/www/html/file1"
+```
+
+4. Refresh the security context
+   man semange fcontext
+
+```shell
+[root@node1 html]# restorecon -R -v /var/www/html/file1
+Relabeled /var/www/html/file1 from system_u:object_r:default_t:s0 to system_u:object_r:httpd_sys_content_t:s0
+```
+
+5. Use semanage to release port 82
+   man semanage port
+
+```shell
+[root@node1 ~]# semanage port -a -t http_port_t -p tcp 82
+```
+
+6. Check whether port 82 is allowed
+   man semanage port
+
+```shell
+[root@node1 ~]# semanage port -l | grep http
+http_port_t tcp 82, 80, 81, 443, 488, 8008, 8009, 8443, 9000
+```
+
+7. Restart the httpd service, set the boot to start automatically, and check whether the service is enabled
+
+```shell
+[root@node1 ~]# systemctl restart httpd
+[root@node1 ~]# systemctl enable httpd
+[root@node1 ~]# systemctl status httpd
+```
+
+8. Access verification
+
+```shell
+[root@node1 html]# curl http://172.25.250.100:82/file{1..3}
+```

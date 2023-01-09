@@ -59,8 +59,10 @@ DNS1=172.25.250.254
 
 ## Question:2 Configure your system to use the default repository
 
-YUM repositories are already available from `http://foundation0.ilt.example.com/dvd/BaseOS` and `http://foundation0.ilt.example.com/dvd/AppStream`
+YUM repositories are already available from
 
+- `http://foundation0.ilt.example.com/dvd/BaseOS`
+- `http://foundation0.ilt.example.com/dvd/AppStream`
 - Configure your system to use these locations as default repository
 
 ## Answer:2 Configure your system to use the default repository

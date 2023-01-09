@@ -175,3 +175,112 @@ http_port_t tcp 82, 80, 81, 443, 488, 8008, 8009, 8443, 9000
 ```shell
 [root@node1 html]# curl http://172.25.250.100:82/file{1..3}
 ```
+
+## Question:4 create user account
+
+Create the following users, groups, and group memberships:
+A group named sysmgrs
+
+- User natasha , who also belongs to `sysmgrs` as a secondary group
+- User harry , who also belongs to `sysmgrs` as a secondary group
+- User sarah , does not have access to an interactive shell on the system and is not a member of `sysmgrs`
+- passwords for natasha , harry and sarah should all be `flectrag`
+
+## Answer:4 create user account
+
+```shell
+[root@clear ~]# groupadd sysmgrs
+[root@clear ~]# useradd natasha -G sysmgrs
+[root@clear ~]# useradd harry  -G sysmgrs
+[root@clear ~]# useradd sarah --shell /sbin/nologin
+[root@clear ~]# echo "flectrag" | passwd --stdin natasha
+Changing password for user natasha.
+passwd: all authentication tokens updated successfully.
+[root@clear ~]# echo "flectrag" | passwd --stdin harry
+Changing password for user harry.
+passwd: all authentication tokens updated successfully.
+[root@clear ~]# echo "flectrag" | passwd --stdin sarah
+Changing password for user sarah.
+passwd: all authentication tokens updated successfully.
+
+Check connectivity
+[root@node1 ~]# ssh natasha@localhost
+[harry@node1 ~]$ ssh sarah@localhost
+[harry@node1 ~]$ ssh sarah@localhost	#no interactive shell allocated for sarah /sbin/nologin
+```
+
+## Question:5 Configure a cron job (service)
+
+Configure a cron job that runs every 2 minutes and executes the following command:
+
+- logger "EX200 in progress", run as user natasha
+
+## Answer:5 Configure a cron job (service)
+
+```shell
+1.check if cron service is currently running
+[root@node1 ~]# systemctl status crond.service
+Active: active (running)
+
+2. Edit scheduled tasks
+[root@node1 ~]# crontab -u natasha -e
+[root@node1 ~]# crontab -u natasha -l
+*/2 * * * * logger "EX200 in progress"
+
+3. enable and restart service
+[root@node1 ~]# systemctl enable crond.service
+
+4.Check if log message are being loggged
+#verify
+[root@node1 ~]# grep EX200 /var/log/messages
+node1 natasha[28082]: EX200 in progress
+node1 natasha[28086]: EX200 in progress
+node1 natasha[28097]: EX200 in progress
+```
+
+## Question:6 Create a collaboration directory
+
+- `/home/managers` with the following characteristics:
+
+- The group permissions for `/home/managers` are `sysmgrs`.
+- The directory should be `read`, `write`, and `accessible by members of sysmgrs`, but not by `any other user`. (Of course, the root user has access to all files and directories on the system).
+- Files created in `/home/managers` automatically set group ownership to the `sysmgrs group`.
+
+## Answer:6 Create a collaboration directory
+
+```shell
+Check if directory exists
+[root@node1 ~]# ll -d /home/managers
+
+1. Create the specified directory file
+[root@node1 ~]# mkdir /home/managers
+
+2.Modify the group permission of `/home/managers` to sysmgrs
+
+[root@node1 ~]# ll -d /home/managers/
+drwxr-xr-x. 2 root root 6 May 14 18:16 /home/managers/
+
+[root@node1 ~]# chown root:sysmgrs /home/managers/
+
+[root@node1 ~]# ll -d /home/managers/
+drwxr-xr-x. 2 root sysmgrs 6 May 14 18:16 /home/managers/
+
+3. Modify the directory file and the permissions of the group to which it belongs
+[root@node1 ~]# chmod 070 /home/managers/
+[root@node1 ~]# chmod g=rwx,o=- /home/managers
+
+[root@node1 ~]# ll -d /home/managers/
+d---rwx---. 2 root sysmgrs 6 May 14 18:16 /home/managers/
+
+4. Set special permissions for the `/home/managers` directory so that its subdirectories inherit the group of the parent directory
+[root@node1 ~]# chmod g+s /home/managers/
+
+[root@node1 ~]# ll -d /home/managers/
+d---rws---. 2 root sysmgrs 6 May 14 18:16 /home/managers/
+
+5. Verify the effect of g+s permission
+[root@node1 managers]# touch file
+[root@node1 managers]# ll
+total 0
+-rw-r--r--. 1 root sysmgrs 0 May 14 18:27 file
+```

@@ -66,13 +66,17 @@ YUM repositories are already available from `http://foundation0.ilt.example.com/
 ## Answer:2 Configure your system to use the default repository
 
 1. Install the yum-config-manager installation package
-   [root@clear ~]# rpm -ivh http://foundation0.ilt.example.com/dvd/BaseOS/Packages/yum-utils-4.0.12-3.el8.noarch.rpm
+
+```shell
+[root@clear ~]# rpm -ivh http://foundation0.ilt.example.com/dvd/BaseOS/Packages/yum-utils-4.0.12-3.el8.noarch.rpm
+```
 
 2. repository file download and install
 
-# yum-config-manager
-
-# yum-config-manager -h
+```shell
+# yum-config-manager command could be helpful to set a local repository quickly
+# yum-config-manager -h command to look for some help
+```
 
 ```shell
 [root@clear ~]# yum-config-manager --add-repo http://foundation0.ilt.example.com/dvd/BaseOS

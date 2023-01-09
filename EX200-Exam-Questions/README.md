@@ -110,8 +110,9 @@ A web server running on a non-standard port 82 is having trouble serving content
 
 ## Answer:3 Debug SELinux (service)
 
-#semanage command is used to query and modify the security context of the SELinux default directory
-#apache belongs to `httpd` service
+- semanage command is used to query and modify the security context of the SELinux default directory
+
+- apache belongs to `httpd` service
 
 1. View httpd service status
 
@@ -122,7 +123,9 @@ Active: failed (Result: exit-code)
 
 2. View the security context of the HTML file
 
-# ls -Z prints the security context of the file
+```shell
+ls -Z  #prints the security context of the file
+```
 
 ```shell
 [root@node1 html]# ls -Z /var/www/html/*
@@ -131,16 +134,18 @@ system_u:object_r:httpd_sys_content_t:s0 /var/www/html/file2
 system_u:object_r:httpd_sys_content_t:s0 /var/www/html/file3
 ```
 
-3. Modify the security context of the original /var/www/html/file1 file
-   man semange fcontext
-   -a is replaced by -m (modify)
+3. Modify the security context of the original `/var/www/html/file1` file
+
+```shell
+man semange fcontext
+# parameters to look for -a is replaced by -m (modify)
+```
 
 ```shell
 [root@node1 html]# semanage fcontext -m -t httpd_sys_content_t "/var/www/html/file1"
 ```
 
 4. Refresh the security context
-   man semange fcontext
 
 ```shell
 [root@node1 html]# restorecon -R -v /var/www/html/file1
@@ -148,16 +153,16 @@ Relabeled /var/www/html/file1 from system_u:object_r:default_t:s0 to system_u:ob
 ```
 
 5. Use semanage to release port 82
-   man semanage port
 
 ```shell
+# man semanage port
 [root@node1 ~]# semanage port -a -t http_port_t -p tcp 82
 ```
 
 6. Check whether port 82 is allowed
-   man semanage port
 
 ```shell
+# man semanage port
 [root@node1 ~]# semanage port -l | grep http
 http_port_t tcp 82, 80, 81, 443, 488, 8008, 8009, 8443, 9000
 ```

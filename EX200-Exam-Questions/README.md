@@ -102,7 +102,7 @@ foundation0.ilt.example.com_dvd_AppStream.repo  foundation0.ilt.example.com_dvd_
 
 A web server running on a non-standard port 82 is having trouble serving content. Debug and resolve the issue as necessary so that the following conditions are met:
 
-- The web server on the system is able to serve all existing HTML files in /var/www/html (note: do not delete or otherwise alter the contents of existing files)
+- The web server on the system is able to serve all existing HTML files in `/var/www/html` (note: do not delete or otherwise alter the contents of existing files)
 
 - The web server serves this content on port 82
 

@@ -98,34 +98,6 @@ foundation0.ilt.example.com_dvd_AppStream.repo  foundation0.ilt.example.com_dvd_
 # gpgcheck=0
 ```
 
-- 4.1. import key
-
-```shell
-[root@node1 ~]# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
-```
-
-- 4.2 Search Validation Documents
-
-```shell
-[root@clear yum.repos.d]# find / -name *KEY*
-/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta
-/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
-/usr/share/doc/gnupg2/KEYSERVER
-```
-
-Add validation file
-
-```shell
-[root@clear yum.repos.d]# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
-```
-
-5. test
-
-```shell
-[root@clear yum.repos.d]# yum install -y ftp
-Complete!
-```
-
 ## Question:3 Debug SELinux (service)
 
 A web server running on a non-standard port 82 is having trouble serving content. Debug and resolve the issue as necessary so that the following conditions are met:

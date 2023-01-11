@@ -195,7 +195,7 @@ A group named sysmgrs
 - User natasha , who also belongs to `sysmgrs` as a secondary group
 - User harry , who also belongs to `sysmgrs` as a secondary group
 - User sarah , does not have access to an interactive shell on the system and is not a member of `sysmgrs`
-- passwords for natasha , harry and sarah should all be `flectrag`
+- passwords for natasha , harry and sarah should all be `password`
 
 ## Answer:4 create user account
 
@@ -204,13 +204,13 @@ A group named sysmgrs
 [root@clear ~]# useradd natasha -G sysmgrs
 [root@clear ~]# useradd harry  -G sysmgrs
 [root@clear ~]# useradd sarah --shell /sbin/nologin
-[root@clear ~]# echo "flectrag" | passwd --stdin natasha
+[root@clear ~]# echo "password" | passwd --stdin natasha
 Changing password for user natasha.
 passwd: all authentication tokens updated successfully.
-[root@clear ~]# echo "flectrag" | passwd --stdin harry
+[root@clear ~]# echo "password" | passwd --stdin harry
 Changing password for user harry.
 passwd: all authentication tokens updated successfully.
-[root@clear ~]# echo "flectrag" | passwd --stdin sarah
+[root@clear ~]# echo "password" | passwd --stdin sarah
 Changing password for user sarah.
 passwd: all authentication tokens updated successfully.
 
@@ -294,4 +294,198 @@ d---rws---. 2 root sysmgrs 6 May 14 18:16 /home/managers/
 [root@node1 managers]# ll
 total 0
 -rw-r--r--. 1 root sysmgrs 0 May 14 18:27 file
+```
+
+## Question:7 Configure NTP (time synchronization service) (service)
+
+- Configure your system to be an NTP client for `materials.example.com`. \
+  (Note: materials.example.com is a DNS alias for classroom.example.com)
+
+## Answer:7 Configure NTP (time synchronization service) (service)
+
+```shell
+# systemctl list-units lists all startup units
+# Unit is the basic unit for Systemd to manage system resources
+
+# The client side synchronizes with the server
+# nodel is the client materials.example.com's NTP is the server
+
+1.View the name of the main configuration file of the NTP service
+[root@node1 ~]# systemctl list-units | grep NTP
+chronyd.service
+
+2. Confirm whether the service is started
+[root@node1 ~]# systemctl status chronyd.service
+Active: active (running)
+
+3. Modify the service configuration file and specify the address of the upstream server to be added
+[root@node1 ~]# vim /etc/chrony.conf
+#server_gateway iburst
+server materials.example.com iburst
+
+4. Restart the service, let the modification of the configuration file take effect, and set the boot to start automatically
+[root@node1 ~]# systemctl restart chronyd.service
+[root@node1 ~]# systemctl enable chronyd.service
+
+5. Verify
+method one:
+[root@node1 ~]# chronyc sources -v #View synchronization time status
+^* classroom.example.com
+
+method two:
+[root@node1 ~]# timedatectl
+#Check whether NTP is active and whether the system clock is synchronized
+System clock synchronized: yes
+                NTP service: active
+```
+
+## Question:8 Configure autofs (service)
+
+- Configure autofs to automatically mount remote users' home directories as follows:
+
+- materials.example.com ( 172.25.254.254 ) NFS exports /rhome to your system. This file system contains a preconfigured home directory for - user `remoteuser1`
+- remoteuser1's home directory is `materials.example.com:/rhome/remoteuser1`
+- The home directory of remoteuser1 should be automatically mounted to `/rhome/remoteuser1` under the local `/rhome`
+- The home directory must be writable by its user
+- The password for remoteuser1 is `password`
+
+## Answer:8 Configure autofs (service)
+
+```shell
+1. Find the main configuration file
+[root@node1 ~]# rpm -qc autofs
+/etc/auto.master # absolute path configuration file
+/etc/auto.misc # relative path configuration file
+
+2. Configure the main configuration file
+[root@node1 ~]# vim /etc/auto.master
+/misc /etc/auto.misc
+/rhome /etc/auto.rhome #relative path configuration file
+
+3. Copy the relative path configuration file to the path written by the main configuration file
+[root@node1 ~]# cp /etc/auto.misc /etc/auto.rhome
+
+4. Edit the relative path configuration file
+[root@node1 ~]# vim /etc/auto.rhome
+remoteuser1 -rw materials.example.com:/rhome/remoteuser1
+
+5.
+restart service
+[root@node1 ~]# systemctl restart autofs.service
+
+check status
+[root@node1 ~]# systemctl status autofs.service
+Active: active (running)
+
+Set up autostart
+[root@node1 ~]# systemctl enable autofs.service
+Created symlink /etc/systemd/system/multi-user.target.wants/autofs.service → /usr/lib/systemd/system/autofs.service.
+
+6. Login test
+[root@node1 ~]# ssh remoteuser1@localhost
+[remoteuser1@clear ~]$ pwd
+/rhome/remoteuser1
+Check write permissions
+[remoteuser1@node1 ~]$ touch 1.txt
+[remoteuser1@node1 ~]$ ll
+total 0
+-rw-rw-r--. 1 devops devops 0 May 27 12:04 1.txt
+```
+
+## Question:9 Configure /var/tmp/fstab permissions
+
+- Copy the file `/etc/fstab` to `/var/tmp/fstab` . Configure the permissions of `/var/tmp/fstab` to meet the following conditions:
+- File `/var/tmp/fstab` owned by `root` user
+- File `/var/tmp/fstab` belongs to group `root`
+- The file `/var/tmp/fstab` should not be executable by `anyone`.
+- User natasha can read and write to `/var/tmp/fstab`.
+- User harry cannot write or read `/var/tmp/fstab`.
+- All other users (current or future) can read `/var/tmp/fstab`.
+
+## Answer:9 Configure /var/tmp/fstab permissions
+
+```shell
+1. File copy
+[root@node1 ~]# cp /etc/fstab /var/tmp/fstab
+
+2. Check whether the owner and the owner group meet the meaning of the question, and there is no execution permission
+[root@node1 ~]# ll -d /var/tmp/fstab
+-rw-r--r--. 1 root root 534 May 23 12:27 /var/tmp/fstab
+
+3. Set setfacl permission
+man setfacl
+[root@node1 ~]# setfacl -m u:natasha:rw-,u:harry:- /var/tmp/fstab
+
+4. Verify
+[root@node1 ~]# getfacl /var/tmp/fstab
+user:natasha:rw-
+user:harry:---
+```
+
+## Question:10 Configure user accounts
+
+- Configure user `manalo` with user `ID 3533`.
+
+## Answer:10 Configure user accounts
+
+```shell
+[root@clear ~]# useradd -u 3533 manalo
+[root@clear ~]# echo "password" | passwd --stdin manalo
+Changing password for user manalo.
+passwd: all authentication tokens updated successfully.
+```
+
+## Question:11 Find files
+
+- Find all files owned by `jacques` and place a copy of them in the `/root/findfiles` directory.
+
+## Answer:11 Find files
+
+```shell
+1. Create a directory
+[root@clear ~]# mkdir /root/findfiles
+
+2. Find
+[root@clear ~]# find / -user jacques -exec cp -a {} /root/findfiles/ \;
+
+3. Verification
+[root@clear ~]# ls /root/findfiles/
+gamelan jacques libWedgeit.so.1.2.3
+```
+
+## Question:12 Find a string
+
+- Finds all lines in the file `/usr/share/xml/iso-codes/iso_639_3.xml` that contain the string `ng`.
+- Put a copy of all these lines in the file `/root/list` in their original order.
+- `/root/list` must not contain empty lines, and all lines must be exact copies of the original lines in `/usr/share/xml/iso-codes/iso_639_3.xml`.
+
+## Answer:12 Find a string
+
+```shell
+1. Find the string
+[root@node1 ~]# grep ng /usr/share/xml/iso-codes/iso_639_3.xml | grep -v ^$ > /root/list
+
+2. Verification
+[root@node1 ~]# cat -n /root/list
+```
+
+## Question:13 Create archive
+
+- Create a tar archive named `/root/backup.tar.gz`, which should contain the tar archive of` /usr/local`
+- Which should contain the contents of `/usr/local`. The tar archive must be compressed with `gzip` format.
+
+## Answer:13 Create archive
+
+```
+1. pack
+[root@clear ~]# tar -czvf /root/backup.tar.gz /usr/local
+
+2. Verification
+[root@clear ~]# ls
+anaconda-ks.cfg findfiles
+backup.tar.gz original-ks.cfg
+
+3. Verify whether it is gzip
+[root@clear ~]# file backup.tar.gz
+backup.tar.gz: gzip compressed data, last modified: Sun May 22 17:10:03 , from Unix, original size 51200
 ```

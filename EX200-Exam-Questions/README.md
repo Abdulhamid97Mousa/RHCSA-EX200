@@ -489,3 +489,39 @@ backup.tar.gz original-ks.cfg
 [root@clear ~]# file backup.tar.gz
 backup.tar.gz: gzip compressed data, last modified: Sun May 22 17:10:03 , from Unix, original size 51200
 ```
+
+## Question:14 Add a swap partition
+
+Adding an extra 500M swap partition to your system, this swap partition should mount automatically when the system starts up. Don't remove and modify the
+existing swap partitions on your system.
+
+## Question:15 Create a logical volume
+
+Create a new logical volume as required:
+
+- Name the logical volume as database, belongs to datastore of the volume group, size is 50 PE.
+- Expansion size of each volume in volume group datastore is 16MB.
+- Use ext3 to format this new logical volume, this logical volume should automatically mount to `/mnt/database`.
+
+## Question:16 Create a logical volume
+
+- One Logical Volume is created named as myvol under vo volume group and is mounted. The Initial Size of that Logical Volume is 400MB. Make successfully that
+- the size of Logical Volume 200MB without losing any data. The size of logical volume 200MB to 210MB will be acceptable.
+
+## Question:17 Create a logical volume
+
+1. Find all sizes of 10k file or directory under the /etc directory, and copy to `/tmp/findfiles` directory.
+2. Find all the files or directories with `Lucy as the owner`, and copy to `/tmp/findfiles` directory.
+
+## Question:18 Shrink a logical volume
+
+There is a local logical volumes in your system, named with shrink and belong to VGSRV volume group, mount to the `/shrink` directory. The definition of size is 320
+MB.
+
+Requirement:
+Reduce the logical volume to 220 MB without any loss of data. The size is allowed between 200-260 MB after reducing.
+
+## Question:19 Search a String
+
+Search a StringFind out all the columns that contains the string seismic within /usr/share/dict/words, then copy all these columns to /root/lines.tx in original order, there is no blank
+line, all columns must be the accurate copy of the original columns.

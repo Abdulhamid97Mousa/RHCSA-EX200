@@ -525,3 +525,24 @@ Reduce the logical volume to 220 MB without any loss of data. The size is allowe
 
 Search a StringFind out all the columns that contains the string seismic within /usr/share/dict/words, then copy all these columns to /root/lines.tx in original order, there is no blank
 line, all columns must be the accurate copy of the original columns.
+
+## Question:20 Create a script for locating files
+
+(1) Create a script named `/usr/local/bin/file.sh`.
+(2) Find all files under `/usr` that are less than 10M and have sgid permissions set.
+(3) Save the found file list to `/root/myfile`.
+
+## Answer:20 Create a script for locating files
+
+```shell
+[root@servera ~]# vim /usr/local/bin/file.sh
+#!/bin/bash
+find /usr -size -10M -perm -2000 > /root/myfile
+[root@servera ~]# chmod a+x /usr/local/bin/file.sh
+[root@servera ~]# file.sh
+[root@servera ~]# cat /root/myfile
+/usr/bin/write
+/usr/bin/locate
+/usr/libexec/utempter/utempter
+/usr/libexec/openssh/ssh-keysign
+```

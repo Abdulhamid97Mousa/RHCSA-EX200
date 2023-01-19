@@ -523,8 +523,7 @@ Reduce the logical volume to 220 MB without any loss of data. The size is allowe
 
 ## Question:19 Search a String
 
-Search a StringFind out all the columns that contains the string seismic within /usr/share/dict/words, then copy all these columns to /root/lines.tx in original order, there is no blank
-line, all columns must be the accurate copy of the original columns.
+Search a StringFind out all the columns that contains the string seismic within /usr/share/dict/words, then copy all these columns to /root/lines.tx in original order, there is no blank line, all columns must be the accurate copy of the original columns.
 
 ## Question:20 Create a script for locating files
 

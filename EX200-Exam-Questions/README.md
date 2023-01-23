@@ -665,7 +665,6 @@ Installed:
 
 Complete!
 
-
 4.man vdo view format
 [root@node2 ~]# vdo create --name=vdough --device=/dev/vdc --vdoLogicalSize=50G
 
@@ -702,9 +701,9 @@ UUID="a1f68c65-cf38-4cc8-b508-860a2e90397c" /vbread xfs _netdev 0 0
 
 ## Question:20 Create a script for locating files
 
-(1) Create a script named `/usr/local/bin/file.sh`.
-(2) Find all files under `/usr` that are less than 10M and have `sgid` permissions set.
-(3) Save the found file list to `/root/myfile`.
+- Create a script named `/usr/local/bin/file.sh`.
+- Find all files under `/usr` that are less than 10M and have `sgid` permissions set.
+- Save the found file list to `/root/myfile`.
 
 ## Answer:20 Create a script for locating files
 

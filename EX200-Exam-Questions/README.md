@@ -492,8 +492,45 @@ backup.tar.gz: gzip compressed data, last modified: Sun May 22 17:10:03 , from U
 
 ## Question:14 Add a swap partition
 
-Adding an extra 500M swap partition to your system, this swap partition should mount automatically when the system starts up. Don't remove and modify the
+Adding an extra 512M swap partition to your system, this swap partition should mount automatically when the system starts up. Don't remove and modify the
 existing swap partitions on your system.
+
+## Answer:14 Add a swap partition
+
+```shell
+1. List all block devices
+[root@node2~]# lsblk
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+vda 252:0 0 10G 0 disk
+├─vda1 252:1 0 1M 0 part
+├─vda2 252:2 0 100M 0 part /boot/efi
+└─vda3 252:3 0 9.9G 0 part /
+vdb 252:16 0 4G 0 disk
+├─vdb1 252:17 0 510M 0 part
+│ └─myvol-vo 253:1 0 232M 0 lvm /reports
+└─vdb2 252:18 0 512M 0 part
+   └─vgroup-swap 253:0 0 256M 0 lvm [SWAP]
+vdc 252:32 0 10G 0 disk
+
+2. Create disk partitions
+[root@node2 ~]# fdisk /dev/vdb
+
+3. Formatting
+[root@node2 ~]# mkswap /dev/vdb3
+Setting up swapspace version 1, size = 512 MiB (792719360 bytes)
+no label, UUID=ba522efa-8aa3-4e96-b8e2-39aafa20f3cb
+
+4. Permanent mount
+[root@node2 ~]# vim /etc/fstab
+UUID=ba522efa-8aa3-4e96-b8e2-39aafa20f3cb none swap defaults 0 0
+
+5. Verify
+[root@node2 ~]# swapon -a #refresh
+[root@node2 ~]# swapon
+NAME TYPE SIZE USED PRIO
+/dev/dm-0 partition 256M 0B -2
+/dev/vdb3 partition 512M 0B -3
+```
 
 ## Question:15 Create a logical volume
 
@@ -505,8 +542,33 @@ Create a new logical volume as required:
 
 ## Question:16 Create a logical volume
 
-- One Logical Volume is created named as myvol under vo volume group and is mounted. The Initial Size of that Logical Volume is 400MB. Make successfully that
-- the size of Logical Volume 200MB without losing any data. The size of logical volume 200MB to 210MB will be acceptable.
+- Set logical volume size
+
+- Resize the logical volume vo and its file system to 230 MiB. Make sure the filesystem contents remain unchanged. Note: The partition size is rarely exactly the requested size, so a range of 230 MiB to 270 MiB is acceptable.
+
+## Answer:16 Create a logical volume
+
+```shell
+1. Query logical volume vo
+[root@node2 ~]# df -h
+/dev/mapper/myvol-vo 175M 1.6M 160M 1% /reports
+
+2. Expansion
+[root@node2 ~]# lvextend -L 250M /dev/mapper/myvol-vo #Expand logical volume space
+   Logical volume myvol/vo successfully resized.
+
+3. Query formatting type (ext4)
+[root@node2 ~]# blkid | grep vo
+/dev/mapper/myvol-vo: UUID="67994f68-d3e1-4686-8393-8df05149883f" TYPE="ext4"
+
+
+5. Refresh according to type
+[root@node2 ~]# resize2fs /dev/mapper/myvol-vo
+
+6. Verify
+[root@node2 ~]# df -h
+/dev/mapper/myvol-vo 240M 2.1M 204M 1% /reports
+```
 
 ## Question:17 Create a logical volume
 

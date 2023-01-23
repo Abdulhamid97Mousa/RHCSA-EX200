@@ -18,7 +18,7 @@ One VM will be configured as an Server-A and another would be Server-B. there wi
 
 > you can create the lab setup manually, but instead i've `Vagrantfile` which you can use inorder to create this setup, please go to this website for more information regarding lab setup https://github.com/rdbreak/rhcsa8env
 
-## Question:1
+## Question:1 Configure your Host Name, IP Address, Gateway and DNS.
 
 Configure your Host Name, IP Address, Gateway and DNS.
 
@@ -28,7 +28,7 @@ Configure your Host Name, IP Address, Gateway and DNS.
 - Gateway: `172.25.250.254`
 - DNS: `172.25.250.254`
 
-## Answer:1
+## Answer:1 Configure your Host Name, IP Address, Gateway and DNS.
 
 > setting up hostname
 

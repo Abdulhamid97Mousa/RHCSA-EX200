@@ -369,8 +369,7 @@ System clock synchronized: yes
 [root@node1 ~]# vim /etc/auto.rhome
 remoteuser1 -rw materials.example.com:/rhome/remoteuser1
 
-5.
-restart service
+5. restart service
 [root@node1 ~]# systemctl restart autofs.service
 
 check status

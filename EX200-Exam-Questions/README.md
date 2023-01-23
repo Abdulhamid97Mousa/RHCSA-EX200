@@ -491,7 +491,7 @@ backup.tar.gz: gzip compressed data, last modified: Sun May 22 17:10:03 , from U
 
 ## Question:14 Add a swap partition
 
-Adding an extra 512M swap partition to your system, this swap partition should mount automatically when the system starts up. Don't remove and modify the
+Adding an extra `512M` swap partition to your system, this swap partition should mount automatically when the system starts up. Don't remove and modify the
 existing swap partitions on your system.
 
 ## Answer:14 Add a swap partition
@@ -535,8 +535,8 @@ NAME TYPE SIZE USED PRIO
 
 Create a new logical volume as required:
 
-- Name the logical volume as database, belongs to datastore of the volume group, size is 60 PE.
-- Expansion size of each volume in volume group datastore is 16MB.
+- Name the logical volume as database, belongs to datastore of the volume group, size is `60 PE`.
+- Expansion size of each volume in volume group datastore is `16MB`.
 - Use ext3 to format this new logical volume, this logical volume should automatically mount to `/mnt/database`.
 
 ## Answer:15 Create a logical volume
@@ -584,7 +584,7 @@ UUID="5ad7f2df-9749-4a46-adb6-853f3805d795" /mnt/qa ext3 defaults 0 0
 
 - Set logical volume size
 
-- Resize the logical volume vo and its file system to 230 MiB. Make sure the filesystem contents remain unchanged. Note: The partition size is rarely exactly the requested size, so a range of 230 MiB to 270 MiB is acceptable.
+- Resize the logical volume vo and its file system to `230 MiB`. Make sure the filesystem contents remain unchanged. Note: The partition size is rarely exactly the requested size, so a range of `230 MiB` to `270 MiB` is acceptable.
 
 ## Answer:16 Create a logical volume
 
@@ -612,7 +612,7 @@ UUID="5ad7f2df-9749-4a46-adb6-853f3805d795" /mnt/qa ext3 defaults 0 0
 
 ## Question:17 Permissions
 
-1. Find all sizes of 10k file or directory under the /etc directory, and copy to `/tmp/findfiles` directory.
+1. Find all sizes of 10k file or directory under the `/etc` directory, and copy to `/tmp/findfiles` directory.
 2. Find all the files or directories with `Lucy as the owner`, and copy to `/tmp/findfiles` directory.
 
 ## Answer:17 Permissions
@@ -635,10 +635,75 @@ user:natasha:rw-
 user:harry:---
 ```
 
+## Question:18 Create VDO volume (service)
+
+- Create VDO volumes
+
+- Create a new VDO volume with the following requirements:
+- use unpartitioned disk
+- The name of the volume is `vdough`
+- The logical size of the volume is `50G`
+- The volume is formatted with the `xfs` file system
+- The volume is mounted (at system boot) under `/vbread`
+
+```shell
+1. Search for the installation package
+[root@node2 ~]# yum search vdo
+vdo.x86_64
+kmod-kvdo.x86_64
+
+2. Check the installation
+[root@node2 ~]# rpm -q vdo kmod
+package vdo is not installed
+kmod-25-16.el8.x86_64
+
+3. Install
+[root@node2 ~]# yum install -y vdo.x86_64 kmod-kvdo.x86_64
+Installed:
+   kmod-kvdo-6.2.2.117-65.el8.x86_64
+   vdo-6.2.2.117-13.el8.x86_64
+
+Complete!
+
+
+4.man vdo view format
+[root@node2 ~]# vdo create --name=vdough --device=/dev/vdc --vdoLogicalSize=50G
+
+5. Formatting
+# -K quick format (uppercase)
+
+[root@node2 ~]# mkfs.xfs -K /dev/mapper/vdough
+
+6. Create a mount point
+[root@node2 ~]# mkdir /vbread
+
+7. Find the UUID
+[root@node2 ~]# blkid
+or
+[root@node2 ~]# blkid /dev/mapper/vdough
+/dev/mapper/vdough: UUID="a1f68c65-cf38-4cc8-b508-860a2e90397c" TYPE="xfs"
+
+8. Make a permanent mount, and then mount it through the network
+[root@node2 ~]# vim /etc/fstab
+UUID="a1f68c65-cf38-4cc8-b508-860a2e90397c" /vbread xfs _netdev 0 0
+
+9. load
+[root@node2 ~]# mount -a # Load all devices set in the file /etc/fstab
+
+10.
+[root@node2 ~]# df -h
+/dev/mapper/vdough 50G 390M 50G 1% /vbread
+
+11. vdo is a service that needs to be set to start automatically at boot
+[root@node2 ~]# systemctl restart vdo
+[root@node2 ~]# systemctl enable vdo
+[root@node2 ~]# systemctl status vdo
+```
+
 ## Question:20 Create a script for locating files
 
 (1) Create a script named `/usr/local/bin/file.sh`.
-(2) Find all files under `/usr` that are less than 10M and have sgid permissions set.
+(2) Find all files under `/usr` that are less than 10M and have `sgid` permissions set.
 (3) Save the found file list to `/root/myfile`.
 
 ## Answer:20 Create a script for locating files

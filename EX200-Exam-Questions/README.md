@@ -536,9 +536,50 @@ NAME TYPE SIZE USED PRIO
 
 Create a new logical volume as required:
 
-- Name the logical volume as database, belongs to datastore of the volume group, size is 50 PE.
+- Name the logical volume as database, belongs to datastore of the volume group, size is 60 PE.
 - Expansion size of each volume in volume group datastore is 16MB.
 - Use ext3 to format this new logical volume, this logical volume should automatically mount to `/mnt/database`.
+
+## Answer:15 Create a logical volume
+
+```shell
+1. Create a disk partition
+[root@node2 ~]# fdisk /dev/vdb
+
+2. Create a physical group (pv)
+[root@node2 ~]# pvcreate /dev/vdb4
+   Physical volume "/dev/vdb4" successfully created.
+
+3. Create a volume group (vg)
+[root@node2 ~]# vgcreate qagroup -s 16M /dev/vdb4
+# -s Extended block (PE) size of the physical volume on the volume group
+   Volume group "qagroup" successfully created
+
+4. Create a logical volume (lv)
+[root@node2 ~]# lvcreate -n qa -l 60 /dev/qagroup
+   Logical volume "qa" created.
+
+5. Formatting
+[root@node2 ~]# mkfs.ext3 /dev/qagroup/qa
+
+6. View UUID
+[root@node2 ~]# blkid /dev/qagroup/qa
+/dev/qagroup/qa: UUID="5ad7f2df-9749-4a46-adb6-853f3805d795" SEC_TYPE="ext2" TYPE="ext3"
+
+7. Create /mnt/qa directory
+[root@node2 ~]# mkdir /mnt/qa
+
+8. Make a permanent mount
+[root@node2 ~]# vim /etc/fstab
+UUID="5ad7f2df-9749-4a46-adb6-853f3805d795" /mnt/qa ext3 defaults 0 0
+
+9. load
+[root@node2 ~]# mount -a # Load all devices set in the file /etc/fstab
+
+10.
+[root@node2 ~]# df -h
+/dev/mapper/qagroup-qa 929M 1.2M 880M 1% /mnt/qa
+```
 
 ## Question:16 Create a logical volume
 
@@ -570,22 +611,30 @@ Create a new logical volume as required:
 /dev/mapper/myvol-vo 240M 2.1M 204M 1% /reports
 ```
 
-## Question:17 Create a logical volume
+## Question:17 Permissions
 
 1. Find all sizes of 10k file or directory under the /etc directory, and copy to `/tmp/findfiles` directory.
 2. Find all the files or directories with `Lucy as the owner`, and copy to `/tmp/findfiles` directory.
 
-## Question:18 Shrink a logical volume
+## Answer:17 Permissions
 
-There is a local logical volumes in your system, named with shrink and belong to VGSRV volume group, mount to the `/shrink` directory. The definition of size is 320
-MB.
+```shell
+1. File copy
+[root@node1 ~]# cp /etc/fstab /var/tmp/fstab
 
-Requirement:
-Reduce the logical volume to 220 MB without any loss of data. The size is allowed between 200-260 MB after reducing.
+2. Check whether the owner and the owner group meet the meaning of the question, and there is no execution permission
+[root@node1 ~]# ll -d /var/tmp/fstab
+-rw-r--r--. 1 root root 534 May 23 12:27 /var/tmp/fstab
 
-## Question:19 Search a String
+3. Set setfacl permission
+man setfacl
+[root@node1 ~]# setfacl -m u:natasha:rw-,u:harry:- /var/tmp/fstab
 
-Search a StringFind out all the columns that contains the string seismic within /usr/share/dict/words, then copy all these columns to /root/lines.tx in original order, there is no blank line, all columns must be the accurate copy of the original columns.
+4. Verify
+[root@node1 ~]# getfacl /var/tmp/fstab
+user:natasha:rw-
+user:harry:---
+```
 
 ## Question:20 Create a script for locating files
 
@@ -606,4 +655,54 @@ find /usr -size -10M -perm -2000 > /root/myfile
 /usr/bin/locate
 /usr/libexec/utempter/utempter
 /usr/libexec/openssh/ssh-keysign
+```
+
+## Question:21 Creating scripts
+
+- Create a newsearchscript called
+- The script is placed `/usr/binunder`
+- This script is used to find /usrall files that are greater than `30k`, but less than `50k` and have SUIDpermissions, and place these file names in the `/root/newfilesfile`
+
+## Answer:21 Creating scripts
+
+```shell
+# vim /usr/bin/newsearch
+
+#!/bin/bash
+touch /root/newfiles
+find /usr -size +30k -size -50k -perm /u=s > /root/newfiles
+```
+
+```shell
+# chmod +x /usr/bin/newsearch
+
+# ./usr/bin/newsearch
+
+# cat /root/newfiles
+```
+
+## Question:22 Creating scripts
+
+create script
+
+- Create a myresearchscript called
+- The script is placed `/usr/binunder`
+- This script is used to find `/usrall` files that are smaller than `10m` and have modification Group ID permissions `s`, and place these files `/root/myfilesunder`
+
+## Answers:22 Creating scripts
+
+```shell
+# vim /usr/bin/newsearch
+
+#!/bin/bash
+mkdir /root/newfiles
+find /usr -size -10M -perm /u=s cp -a {} /root/newfiles \;
+```
+
+```shell
+# chmod +x /usr/bin/newsearch
+
+# ./usr/bin/newsearch
+
+# cat /root/newfiles
 ```

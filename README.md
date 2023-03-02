@@ -1,3 +1,6 @@
+![RHCSA](https://user-images.githubusercontent.com/80536675/222508192-136e187a-6db1-4298-ad99-7f300fd34ca6.jpg)
+
+
 # Inspiration:
 This repository is built to help you as beginner to Understand linux system administration, And walk you through RHCE_EX200 study Topics from setting up a lab to mastry in system administration, and ensure that you're ready for the RHCE EX200 exam.
 This repo wasn't built by me, i just found the repo that someone has made and decided to add to it. Please if you star it please start his too.

@@ -2088,10 +2088,10 @@ This repo wasn't built by me, i just found the repo that someone has made and de
         usermod -aG marketing alice
         usermod -aG marketing bob
         usermod -aG marketing charles
-        chgrp marketing marketing # may require restart to take effect
-        chmod 770 marketing
+        chown alice:marketing /marketing
+		# 2 = SGID (new files inherit 'marketing' group)
+        chmod 2770 marketing
         setfacl -m u:charles:r marketing
-        setfacl -m g:marketing:-wx marketing
         touch file
         ```
 
